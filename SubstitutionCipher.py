@@ -26,18 +26,6 @@ def swap_dimensions(x,i,j):
     x[:,[i,j]] = x[:,[j,i]]
     x[[i,j],:] = x[[j,i],:]
     return x
-# =========================================================================
-def fast_attack(s,guess,key):  
-    score = d_score(s,guess)
-    for _ in range(10):
-        for i in range(1,26):
-            for j in range(0,26-i):
-                temp = swap_dimensions(np.copy(guess),j,j+i)
-                if d_score(s,temp) < score:
-                    guess = temp
-                    score = d_score(s,temp)
-                    key[j],key[j+i] = key[j+i],key[j]
-    return key
 
 # =========================================================================
 def r(key,x):
@@ -72,18 +60,17 @@ alphabet = [ord(i) for i in string.ascii_uppercase]
 print('insert data')
 plain_text = get_plain_text()
 cipher_text, key = enc(plain_text,key_generator())
-print("cipher text : ",cipher_text)
+
+# print("cipher text : ",''.join(cipher_text))
 print(" secret key : ",key)
 
 guessKey = guess_key(alphabet,cipher_text,frequency)
-print("Guess key : ",guessKey)
+
 dec_txt = dec(guessKey,cipher_text)
 
+
 frequency_guess = find_frequency(dec_txt)
-
-s = create_freq()
-
-accuracy = r(key,fast_attack(s,frequency_guess,guessKey))
+accuracy = r(key,fast_attack(create_freq(),frequency_guess,guessKey))
 print("accuracy : ",accuracy)
 
 
